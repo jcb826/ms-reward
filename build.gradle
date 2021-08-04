@@ -15,6 +15,10 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation'org.springframework.boot:spring-boot-starter-actuator'
+	implementation group: 'com.jsoniter', name: 'jsoniter', version: '0.9.23'
+	implementation files('RewardCentral.jar', 'libs/RewardCentral.jar')
 }
 
 test {
