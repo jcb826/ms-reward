@@ -1,7 +1,6 @@
-package tourGuide.msreward.reward;
+package tourGuide.msreward.model;
 
-import gpsUtil.location.Attraction;
-import gpsUtil.location.VisitedLocation;
+
 
 // ms-reward // ms-user
 public class UserReward {
