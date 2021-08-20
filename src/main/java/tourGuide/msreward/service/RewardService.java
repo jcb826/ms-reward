@@ -1,19 +1,10 @@
 package tourGuide.msreward.service;
 
-import gpsUtil.GpsUtil;
-import gpsUtil.location.Attraction;
-import gpsUtil.location.Location;
-import gpsUtil.location.VisitedLocation;
+
 import org.springframework.stereotype.Service;
 import rewardCentral.RewardCentral;
 import tourGuide.msreward.consumer.GpsGateway;
-import tourGuide.msreward.model.Attraction;
-import tourGuide.msreward.model.User;
-import tourGuide.msreward.model.UserReward;
-import tourGuide.msreward.model.VisitedLocation;
-import tourGuide.user.User;
-import tourGuide.user.UserReward;
-
+import tourGuide.msreward.model.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

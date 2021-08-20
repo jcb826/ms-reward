@@ -1,7 +1,6 @@
 package tourGuide.msreward.model;
 
-import tourGuide.msreward.reward.UserReward;
-import tripPricer.Provider;
+
 
 import java.util.ArrayList;
 import java.util.Date;
