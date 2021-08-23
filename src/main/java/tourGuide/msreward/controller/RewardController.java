@@ -3,9 +3,7 @@ package tourGuide.msreward.controller;
 import com.jsoniter.output.JsonStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import tourGuide.msreward.model.User;
 import tourGuide.msreward.service.RewardService;
 
@@ -31,8 +29,8 @@ public class RewardController {
          */
         return "toto";
     }
-    @RequestMapping("/calculateRewards")
-    public User getRewards(@RequestParam User user) {
+    @PostMapping("/reward")
+    public User getRewards(@RequestBody User user) {
         return rewardService.calculateRewards(user);
     }
 

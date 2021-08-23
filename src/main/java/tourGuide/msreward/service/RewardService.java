@@ -8,6 +8,7 @@ import tourGuide.msreward.model.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 // dans ms-reward
 @Service
@@ -52,7 +53,7 @@ public class RewardService {
     }
 
     // user
-    public boolean isWithinAttractionProximity(Attraction attraction, Location location) {
+    public boolean isWithinAttractionProximity(Attraction attraction, Attraction location) {
         return (getDistance(attraction, location) < attractionProximityRange);
     }
 
@@ -63,7 +64,7 @@ public class RewardService {
 
     //reward
     private int getRewardPoints(Attraction attraction, User user) {
-        return rewardsCentral.getAttractionRewardPoints(attraction.attractionId, user.getUserId());
+        return rewardsCentral.getAttractionRewardPoints(UUID.fromString(attraction.getAttractionId()), user.getUserId());
     }
 
     // user
