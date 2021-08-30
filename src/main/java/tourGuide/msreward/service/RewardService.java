@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 // dans ms-reward
 @Service
@@ -38,18 +39,22 @@ public class RewardService {
     //  dans ms-user
     public User calculateRewards(User user) {
         List<VisitedLocation> userLocations = new ArrayList<>(user.getVisitedLocations());
-        List<Attraction> attractions = Arrays.asList(gpsGateway.getAttractions().getBody());
+        List<Attraction> attractions = Arrays.stream(gpsGateway.getAttractions().getBody())
+                .filter(attraction -> userDidntGotReward(user,attraction)).collect(Collectors.toList());
 
         for (VisitedLocation visitedLocation : userLocations) {
             for (Attraction attraction : attractions) {
-                if (user.getUserRewards().stream().noneMatch(r -> r.attraction.attractionName.equals(attraction.attractionName))) {
                     if (nearAttraction(visitedLocation, attraction)) {
                         user.addUserReward(new UserReward(visitedLocation, attraction, getRewardPoints(attraction, user)));
                     }
-                }
+
             }
         }
         return user;
+    }
+    private boolean userDidntGotReward(User user,Attraction attraction){
+
+        return user.getUserRewards().stream().noneMatch(r -> r.attraction.attractionName.equals(attraction.attractionName));
     }
 
     // user
