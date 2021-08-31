@@ -1,18 +1,16 @@
 package tourGuide.msreward.controller;
 
-import com.jsoniter.output.JsonStream;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import tourGuide.msreward.model.User;
-import tourGuide.msreward.service.RewardService;
+import tourGuide.msreward.service.RewardsService;
 
 
 @RestController
 public class RewardController {
 
     @Autowired
-    RewardService rewardService;
+    RewardsService rewardService;
 	
     @RequestMapping("/")
     public String index() {

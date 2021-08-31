@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 // dans ms-reward
 @Service
-public class RewardService {
+public class RewardsService {
     private static final double STATUTE_MILES_PER_NAUTICAL_MILE = 1.15077945;
     private final GpsGateway gpsGateway;
     private final RewardCentral rewardsCentral;
@@ -22,7 +22,7 @@ public class RewardService {
     private int proximityBuffer = defaultProximityBuffer;
     private int attractionProximityRange = 200;
 
-    public RewardService(GpsGateway gpsGateway, RewardCentral rewardCentral) {
+    public RewardsService(GpsGateway gpsGateway, RewardCentral rewardCentral) {
         this.gpsGateway = gpsGateway;
 
         this.rewardsCentral = rewardCentral;
