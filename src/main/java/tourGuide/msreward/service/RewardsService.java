@@ -1,10 +1,12 @@
 package tourGuide.msreward.service;
 
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Service;
 import rewardCentral.RewardCentral;
 import tourGuide.msreward.consumer.GpsGateway;
 import tourGuide.msreward.model.*;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -40,9 +42,13 @@ public class RewardsService {
     public User calculateRewards(User user) {
         List<VisitedLocation> userLocations = new ArrayList<>(user.getVisitedLocations());
         List<Attraction> attractions = Arrays.stream(gpsGateway.getAttractions().getBody())
-                .filter(attraction -> userDidntGotReward(user,attraction)).collect(Collectors.toList());
-
+                .filter(attraction -> userDidntGotReward(user, attraction)).collect(Collectors.toList());
+        userLocations.parallelStream().flatMap(l -> attractions.parallelStream().map(a -> Pair.of(l, a)))
+                .filter(p -> nearAttraction(p.getLeft(), p.getRight()))
+                .forEach(p -> user.addUserReward(new UserReward(p.getLeft(), p.getRight(), getRewardPoints(p.getRight(), user))));
+        /*
         for (VisitedLocation visitedLocation : userLocations) {
+
             for (Attraction attraction : attractions) {
                     if (nearAttraction(visitedLocation, attraction)) {
                         user.addUserReward(new UserReward(visitedLocation, attraction, getRewardPoints(attraction, user)));
@@ -50,9 +56,11 @@ public class RewardsService {
 
             }
         }
+         */
         return user;
     }
-    private boolean userDidntGotReward(User user,Attraction attraction){
+
+    private boolean userDidntGotReward(User user, Attraction attraction) {
 
         return user.getUserRewards().stream().noneMatch(r -> r.attraction.attractionName.equals(attraction.attractionName));
     }
