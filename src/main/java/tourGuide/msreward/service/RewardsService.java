@@ -42,27 +42,31 @@ public class RewardsService {
     public User calculateRewards(User user) {
         List<VisitedLocation> userLocations = new ArrayList<>(user.getVisitedLocations());
         List<Attraction> attractions = Arrays.stream(gpsGateway.getAttractions().getBody())
-                .filter(attraction -> userDidntGotReward(user, attraction)).collect(Collectors.toList());
+                .filter(attraction -> userDidntGotReward(user.getUserRewards(), attraction)).collect(Collectors.toList());
         userLocations.parallelStream().flatMap(l -> attractions.parallelStream().map(a -> Pair.of(l, a)))
                 .filter(p -> nearAttraction(p.getLeft(), p.getRight()))
                 .forEach(p -> user.addUserReward(new UserReward(p.getLeft(), p.getRight(), getRewardPoints(p.getRight(), user))));
-        /*
-        for (VisitedLocation visitedLocation : userLocations) {
 
-            for (Attraction attraction : attractions) {
-                    if (nearAttraction(visitedLocation, attraction)) {
-                        user.addUserReward(new UserReward(visitedLocation, attraction, getRewardPoints(attraction, user)));
-                    }
+        return user;
+    }
+    public User calculateRewards(User user,VisitedLocation visitedLocation) {
+        // all attractions
+        List<Attraction> attractions = Arrays.stream(gpsGateway.getAttractions().getBody())
+                // je retire les attractions pour lequels deja recompensé
+                .filter(attraction -> userDidntGotReward(user.getUserRewards(), attraction)).collect(Collectors.toList());
+        attractions.parallelStream()
+                // on check si il est passé a proximité d'une des attraction restantes si oui on le récompense
+                .filter(a->nearAttraction(visitedLocation,a))
+                .findFirst()
+                .ifPresent(a->user.addUserReward(new UserReward(visitedLocation,a, getRewardPoints(a, user))));
 
-            }
-        }
-         */
         return user;
     }
 
-    private boolean userDidntGotReward(User user, Attraction attraction) {
 
-        return user.getUserRewards().stream().noneMatch(r -> r.attraction.attractionName.equals(attraction.attractionName));
+    private boolean userDidntGotReward(List<UserReward> userRewards, Attraction attraction) {
+
+        return userRewards.stream().noneMatch(r -> r.attraction.attractionName.equals(attraction.attractionName));
     }
 
     // user

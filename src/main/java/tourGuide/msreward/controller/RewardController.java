@@ -28,8 +28,8 @@ public class RewardController {
         return "toto";
     }
     @PostMapping("/reward")
-    public User getRewards(@RequestBody User user) {
-        return rewardService.calculateRewards(user);
+    public User getRewards(@RequestBody CalculateRewardsDTO calculateRewardsDTO) {
+        return rewardService.calculateRewards(calculateRewardsDTO.getUser(),calculateRewardsDTO.getVisitedLocation());
     }
 
 }
