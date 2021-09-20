@@ -54,7 +54,6 @@ class MsRewardApplicationTests {
             Assertions.assertTrue(user.getUserRewards().size() > 0);
         }
 
-
         System.out.println("highVolumeGetRewards: Time Elapsed: " + TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()) + " seconds.");
         Assertions.assertTrue(TimeUnit.MINUTES.toSeconds(20) >= TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()));
     }
