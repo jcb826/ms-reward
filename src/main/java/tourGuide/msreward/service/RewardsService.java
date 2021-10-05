@@ -19,16 +19,19 @@ public class RewardsService {
     private static final double STATUTE_MILES_PER_NAUTICAL_MILE = 1.15077945;
     private final GpsGateway gpsGateway;
     private final RewardCentral rewardsCentral;
+    private final List<Attraction> attractions;
     // proximity in miles
     private int defaultProximityBuffer = 10;
     private int proximityBuffer = defaultProximityBuffer;
     private int attractionProximityRange = 200;
 
-    public RewardsService(GpsGateway gpsGateway, RewardCentral rewardCentral) {
+    public RewardsService(GpsGateway gpsGateway, RewardCentral rewardCentral, List<Attraction> attractions) {
         this.gpsGateway = gpsGateway;
 
         this.rewardsCentral = rewardCentral;
+        this.attractions = attractions;
     }
+
 
     public void setProximityBuffer(int proximityBuffer) {
         this.proximityBuffer = proximityBuffer;
@@ -39,16 +42,17 @@ public class RewardsService {
     }
 
     //  dans ms-user
-    public User calculateRewards(User user) {
+    public User calculateRewards(User user,Attraction[] attractions) {
         List<VisitedLocation> userLocations = new ArrayList<>(user.getVisitedLocations());
-        List<Attraction> attractions = Arrays.stream(gpsGateway.getAttractions().getBody())
+        List<Attraction> attractions2 = Arrays.stream(attractions)
                 .filter(attraction -> userDidntGotReward(user.getUserRewards(), attraction)).collect(Collectors.toList());
-        userLocations.parallelStream().flatMap(l -> attractions.parallelStream().map(a -> Pair.of(l, a)))
+        userLocations.parallelStream().flatMap(l -> attractions2.parallelStream().map(a -> Pair.of(l, a)))
                 .filter(p -> nearAttraction(p.getLeft(), p.getRight()))
                 .forEach(p -> user.addUserReward(new UserReward(p.getLeft(), p.getRight(), getRewardPoints(p.getRight(), user))));
 
         return user;
     }
+
     public User calculateRewards(User user,VisitedLocation visitedLocation) {
         // all attractions
         List<Attraction> attractions = Arrays.stream(gpsGateway.getAttractions().getBody())

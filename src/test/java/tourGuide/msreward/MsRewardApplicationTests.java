@@ -13,7 +13,6 @@ import tourGuide.msreward.model.User;
 import tourGuide.msreward.model.VisitedLocation;
 import tourGuide.msreward.service.RewardsService;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -35,20 +34,20 @@ class MsRewardApplicationTests {
     @Test
     public void highVolumeGetRewards() {
 
-        RewardsService rewardsService = new RewardsService(gpsGateway, new RewardCentral());
+        Attraction[] attractions= gpsGateway.getAttractions().getBody();
+        RewardsService rewardsService = new RewardsService(gpsGateway, new RewardCentral(), Arrays.stream(attractions).toList());
 
         // Users should be incremented up to 100,000, and test finishes within 20 minutes
         StopWatch stopWatch = new StopWatch();
 
         //	TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
-
         Attraction attraction = Arrays.stream(gpsGateway.getAttractions().getBody()).toList().get(0);
 
         List<User> allUsers = Arrays.stream(userGateway.getAllUsers().getBody()).toList();
 
         allUsers.parallelStream().forEach(u -> u.addToVisitedLocations(new VisitedLocation(u.getUserId(), attraction, new Date())));
         stopWatch.start();
-        allUsers.parallelStream().forEach(u -> rewardsService.calculateRewards(u));
+        allUsers.parallelStream().forEach(u -> rewardsService.calculateRewards(u,attractions));
         stopWatch.stop();
         for (User user : allUsers) {
             Assertions.assertTrue(user.getUserRewards().size() > 0);
