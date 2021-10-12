@@ -71,11 +71,12 @@ public class User {
 	public void clearVisitedLocations() {
 		visitedLocations.clear();
 	}
-	
-	public void addUserReward(UserReward userReward) {
+
+	public User addUserReward(UserReward userReward) {
 		if(userRewards.stream().noneMatch(r -> r.attraction.attractionName.equals(userReward.attraction.attractionName))) {
 			userRewards.add(userReward);
 		}
+		return this;
 	}
 	
 	public List<UserReward> getUserRewards() {

@@ -5,12 +5,14 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Service;
 import rewardCentral.RewardCentral;
 import tourGuide.msreward.consumer.GpsGateway;
+import tourGuide.msreward.consumer.UserGateway;
 import tourGuide.msreward.model.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 // dans ms-reward
@@ -18,6 +20,7 @@ import java.util.stream.Collectors;
 public class RewardsService {
     private static final double STATUTE_MILES_PER_NAUTICAL_MILE = 1.15077945;
     private final GpsGateway gpsGateway;
+    private final UserGateway userGateway;
     private final RewardCentral rewardsCentral;
     private final List<Attraction> attractions;
     // proximity in miles
@@ -25,8 +28,9 @@ public class RewardsService {
     private int proximityBuffer = defaultProximityBuffer;
     private int attractionProximityRange = 200;
 
-    public RewardsService(GpsGateway gpsGateway, RewardCentral rewardCentral, List<Attraction> attractions) {
+    public RewardsService(GpsGateway gpsGateway, UserGateway userGateway, RewardCentral rewardCentral, List<Attraction> attractions) {
         this.gpsGateway = gpsGateway;
+        this.userGateway = userGateway;
 
         this.rewardsCentral = rewardCentral;
         this.attractions = attractions;
@@ -42,15 +46,31 @@ public class RewardsService {
     }
 
     //  dans ms-user
-    public User calculateRewards(User user,Attraction[] attractions) {
+    public void calculateRewards(User user,Attraction[] attractions) {
+
         List<VisitedLocation> userLocations = new ArrayList<>(user.getVisitedLocations());
+
         List<Attraction> attractions2 = Arrays.stream(attractions)
                 .filter(attraction -> userDidntGotReward(user.getUserRewards(), attraction)).collect(Collectors.toList());
-        userLocations.parallelStream().flatMap(l -> attractions2.parallelStream().map(a -> Pair.of(l, a)))
-                .filter(p -> nearAttraction(p.getLeft(), p.getRight()))
-                .forEach(p -> user.addUserReward(new UserReward(p.getLeft(), p.getRight(), getRewardPoints(p.getRight(), user))));
 
-        return user;
+        List<Pair<VisitedLocation, Attraction>> collect = userLocations.stream().flatMap(l -> attractions2.parallelStream().map(a -> Pair.of(l, a)))
+
+                .filter(p -> nearAttraction(p.getLeft(), p.getRight())).collect(Collectors.toList());
+        CompletableFuture.runAsync(()->
+        {
+            updateUser(user, collect);
+        });
+
+
+
+    }
+
+    private void updateUser(User user, List<Pair<VisitedLocation, Attraction>> collect) {
+
+            collect
+                    .forEach(p -> user.addUserReward(new UserReward(p.getLeft(), p.getRight(), getRewardPoints(p.getRight(), user))));
+            userGateway.updateUser(user);
+
     }
 
     public User calculateRewards(User user,VisitedLocation visitedLocation) {
@@ -102,5 +122,7 @@ public class RewardsService {
         double statuteMiles = STATUTE_MILES_PER_NAUTICAL_MILE * nauticalMiles;
         return statuteMiles;
     }
+
+
 
 }
