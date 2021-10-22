@@ -1,6 +1,7 @@
 package tourGuide.msreward.service;
 
 
+import org.apache.catalina.Executor;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Service;
 import rewardCentral.RewardCentral;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 // dans ms-reward
@@ -27,6 +28,13 @@ public class RewardsService {
     private int defaultProximityBuffer = 10;
     private int proximityBuffer = defaultProximityBuffer;
     private int attractionProximityRange = 200;
+    /*
+    private ExecutorService executorService = new ThreadPoolExecutor(8, 16, 60,
+            TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
+
+
+     */
+    private ExecutorService executorService = Executors.newFixedThreadPool(100);
 
     public RewardsService(GpsGateway gpsGateway, UserGateway userGateway, RewardCentral rewardCentral, List<Attraction> attractions) {
         this.gpsGateway = gpsGateway;
@@ -46,7 +54,7 @@ public class RewardsService {
     }
 
     //  dans ms-user
-    public void calculateRewards(User user,Attraction[] attractions) {
+    public void calculateRewards(User user, Attraction[] attractions) {
 
         List<VisitedLocation> userLocations = new ArrayList<>(user.getVisitedLocations());
 
@@ -56,33 +64,32 @@ public class RewardsService {
         List<Pair<VisitedLocation, Attraction>> collect = userLocations.stream().flatMap(l -> attractions2.parallelStream().map(a -> Pair.of(l, a)))
 
                 .filter(p -> nearAttraction(p.getLeft(), p.getRight())).collect(Collectors.toList());
-        CompletableFuture.runAsync(()->
+        CompletableFuture.runAsync(() ->
         {
             updateUser(user, collect);
-        });
-
+        }, executorService);
 
 
     }
 
     private void updateUser(User user, List<Pair<VisitedLocation, Attraction>> collect) {
 
-            collect
-                    .forEach(p -> user.addUserReward(new UserReward(p.getLeft(), p.getRight(), getRewardPoints(p.getRight(), user))));
-            userGateway.updateUser(user);
+        collect
+                .forEach(p -> user.addUserReward(new UserReward(p.getLeft(), p.getRight(), getRewardPoints(p.getRight(), user))));
+        userGateway.updateUser(user);
 
     }
 
-    public User calculateRewards(User user,VisitedLocation visitedLocation) {
+    public User calculateRewards(User user, VisitedLocation visitedLocation) {
         // all attractions
         List<Attraction> attractions = Arrays.stream(gpsGateway.getAttractions().getBody())
                 // je retire les attractions pour lequels deja recompensé
                 .filter(attraction -> userDidntGotReward(user.getUserRewards(), attraction)).collect(Collectors.toList());
         attractions.parallelStream()
                 // on check si il est passé a proximité d'une des attraction restantes si oui on le récompense
-                .filter(a->nearAttraction(visitedLocation,a))
+                .filter(a -> nearAttraction(visitedLocation, a))
                 .findFirst()
-                .ifPresent(a->user.addUserReward(new UserReward(visitedLocation,a, getRewardPoints(a, user))));
+                .ifPresent(a -> user.addUserReward(new UserReward(visitedLocation, a, getRewardPoints(a, user))));
 
         return user;
     }
@@ -122,7 +129,6 @@ public class RewardsService {
         double statuteMiles = STATUTE_MILES_PER_NAUTICAL_MILE * nauticalMiles;
         return statuteMiles;
     }
-
 
 
 }
