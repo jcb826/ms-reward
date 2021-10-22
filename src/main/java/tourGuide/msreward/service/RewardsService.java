@@ -28,12 +28,6 @@ public class RewardsService {
     private int defaultProximityBuffer = 10;
     private int proximityBuffer = defaultProximityBuffer;
     private int attractionProximityRange = 200;
-    /*
-    private ExecutorService executorService = new ThreadPoolExecutor(8, 16, 60,
-            TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
-
-
-     */
     private ExecutorService executorService = Executors.newFixedThreadPool(100);
 
     public RewardsService(GpsGateway gpsGateway, UserGateway userGateway, RewardCentral rewardCentral, List<Attraction> attractions) {
