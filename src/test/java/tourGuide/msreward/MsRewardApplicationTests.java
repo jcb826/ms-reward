@@ -33,12 +33,12 @@ class MsRewardApplicationTests {
 
     @Test
     public void highVolumeGetRewards() throws InterruptedException {
-
+        StopWatch stopWatch = new StopWatch();
         Attraction[] attractions = gpsGateway.getAttractions().getBody();
         RewardsService rewardsService = new RewardsService(gpsGateway, userGateway, new RewardCentral(), Arrays.stream(attractions).toList());
 
         // Users should be incremented up to 100,000, and test finishes within 20 minutes
-        StopWatch stopWatch = new StopWatch();
+
 
         //	TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
         Attraction attraction = Arrays.stream(gpsGateway.getAttractions().getBody()).toList().get(0);
@@ -59,12 +59,6 @@ class MsRewardApplicationTests {
         for (User user : allUsers) {
             Assertions.assertTrue(user.getUserRewards().size() > 0);
         }
-
-
-
-
-
-
 
         System.out.println("highVolumeGetRewards: Time Elapsed: " + TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()) + " seconds.");
         Assertions.assertTrue(TimeUnit.MINUTES.toSeconds(20) >= TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()));
