@@ -20,12 +20,12 @@ public class UserGateway {
         this.restTemplate = restTemplate;
     }
 
-    public ResponseEntity<User[]> getAllUsers(){
-        // appel du micro service
-        return restTemplate.getForEntity("http://localhost:8091/user/users",User[].class);
+    public ResponseEntity<User[]> getAllUsers() {
+        return restTemplate.getForEntity("http://localhost:8091/user/users", User[].class);
     }
-    public ResponseEntity<Void> updateUser(User user){
+
+    public ResponseEntity<Void> updateUser(User user) {
         HttpEntity<User> request = new HttpEntity<>(user);
-        return restTemplate.exchange("http://localhost:8091/user/"+user.getUserName(), HttpMethod.PUT,request,Void.class);
+        return restTemplate.exchange("http://localhost:8091/user/" + user.getUserName(), HttpMethod.PUT, request, Void.class);
     }
 }

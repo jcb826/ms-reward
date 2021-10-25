@@ -1,7 +1,6 @@
 package tourGuide.msreward.service;
 
 
-import org.apache.catalina.Executor;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Service;
 import rewardCentral.RewardCentral;
@@ -16,7 +15,7 @@ import java.util.UUID;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
-// dans ms-reward
+
 @Service
 public class RewardsService {
     private static final double STATUTE_MILES_PER_NAUTICAL_MILE = 1.15077945;
@@ -47,7 +46,7 @@ public class RewardsService {
         proximityBuffer = defaultProximityBuffer;
     }
 
-    //  dans ms-user
+
     public void calculateRewards(User user, Attraction[] attractions) {
 
         List<VisitedLocation> userLocations = new ArrayList<>(user.getVisitedLocations());
@@ -94,22 +93,22 @@ public class RewardsService {
         return userRewards.stream().noneMatch(r -> r.attraction.attractionName.equals(attraction.attractionName));
     }
 
-    // user
+
     public boolean isWithinAttractionProximity(Attraction attraction, Attraction location) {
         return (getDistance(attraction, location) < attractionProximityRange);
     }
 
-    // user
+
     private boolean nearAttraction(VisitedLocation visitedLocation, Attraction attraction) {
         return getDistance(attraction, visitedLocation.location) > proximityBuffer ? false : true;
     }
 
-    //reward
+
     private int getRewardPoints(Attraction attraction, User user) {
         return rewardsCentral.getAttractionRewardPoints(UUID.fromString(attraction.getAttractionId()), user.getUserId());
     }
 
-    // user
+
     public double getDistance(Location loc1, Location loc2) {
         double lat1 = Math.toRadians(loc1.latitude);
         double lon1 = Math.toRadians(loc1.longitude);

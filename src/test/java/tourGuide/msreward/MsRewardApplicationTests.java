@@ -40,7 +40,6 @@ class MsRewardApplicationTests {
         // Users should be incremented up to 100,000, and test finishes within 20 minutes
 
 
-        //	TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
         Attraction attraction = Arrays.stream(gpsGateway.getAttractions().getBody()).toList().get(0);
 
         List<User> allUsers = Arrays.stream(userGateway.getAllUsers().getBody()).toList();
@@ -49,9 +48,9 @@ class MsRewardApplicationTests {
         stopWatch.start();
         allUsers.parallelStream().forEach(u -> rewardsService.calculateRewards(u, attractions));
         for (User user : allUsers) {
-         while (user.getUserRewards().size()==0){
-             TimeUnit.MILLISECONDS.sleep(200);
-         }
+            while (user.getUserRewards().size() == 0) {
+                TimeUnit.MILLISECONDS.sleep(200);
+            }
         }
 
         stopWatch.stop();
@@ -62,8 +61,6 @@ class MsRewardApplicationTests {
 
         System.out.println("highVolumeGetRewards: Time Elapsed: " + TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()) + " seconds.");
         Assertions.assertTrue(TimeUnit.MINUTES.toSeconds(20) >= TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()));
-
-
     }
 
 }

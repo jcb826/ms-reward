@@ -1,6 +1,5 @@
 package tourGuide.msreward.model;
 
-import java.util.UUID;
 
 public class Attraction extends Location {
     public String attractionName;

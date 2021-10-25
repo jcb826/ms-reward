@@ -1,10 +1,8 @@
 package tourGuide.msreward.controller;
 
 import tourGuide.msreward.model.User;
-import tourGuide.msreward.model.UserReward;
 import tourGuide.msreward.model.VisitedLocation;
 
-import java.util.List;
 
 public class CalculateRewardsDTO {
 

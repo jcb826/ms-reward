@@ -11,25 +11,21 @@ public class RewardController {
 
     @Autowired
     RewardsService rewardService;
-	
+
     @RequestMapping("/")
     public String index() {
         return "Greetings from TourGuide!";
     }
-    
-    @RequestMapping("/getLocation") 
+
+    @RequestMapping("/getLocation")
     public String getLocation(@RequestParam String userName) {
-        /*
 
-    	VisitedLocation visitedLocation = tourGuideService.getUserLocation(getUser(userName));
-		return JsonStream.serialize(visitedLocation.location);
-
-         */
-        return "toto";
+        return "test";
     }
+
     @PostMapping("/reward")
     public User getRewards(@RequestBody CalculateRewardsDTO calculateRewardsDTO) {
-        return rewardService.calculateRewards(calculateRewardsDTO.getUser(),calculateRewardsDTO.getVisitedLocation());
+        return rewardService.calculateRewards(calculateRewardsDTO.getUser(), calculateRewardsDTO.getVisitedLocation());
     }
 
 }
