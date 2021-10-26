@@ -38,6 +38,7 @@ public class RewardsService {
     }
 
 
+
     public void setProximityBuffer(int proximityBuffer) {
         this.proximityBuffer = proximityBuffer;
     }
