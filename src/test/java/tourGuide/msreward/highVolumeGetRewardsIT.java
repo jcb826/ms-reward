@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @SpringBootTest
-class highVolumeGetRewards {
+class highVolumeGetRewardsIT {
 
 
     @Autowired
