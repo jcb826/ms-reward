@@ -89,6 +89,27 @@ public class RewardsService {
     }
 
 
+/*
+    public User calculateRewards(User user,VisitedLocation visitedLocation) {
+        List<VisitedLocation> userLocations = new ArrayList<>( user.getVisitedLocations());
+        List<Attraction> attractions = Arrays.stream(gpsGateway.getAttractions().getBody()).toList();
+
+        for (VisitedLocation visitedLocation1 : userLocations) {
+            for (Attraction attraction : attractions) {
+                if (user.getUserRewards().stream().noneMatch(r -> r.attraction.attractionName.equals(attraction.attractionName))) {
+                    if (nearAttraction(visitedLocation1, attraction)) {
+                        user.addUserReward(new UserReward(visitedLocation1, attraction, getRewardPoints(attraction, user)));
+                        return user;
+                    }
+                }
+            }
+        }
+        return user;
+    }
+
+ */
+
+
     private boolean userDidntGotReward(List<UserReward> userRewards, Attraction attraction) {
 
         return userRewards.stream().noneMatch(r -> r.attraction.attractionName.equals(attraction.attractionName));
