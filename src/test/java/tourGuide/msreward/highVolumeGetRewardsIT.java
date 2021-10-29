@@ -13,9 +13,7 @@ import tourGuide.msreward.model.User;
 import tourGuide.msreward.model.VisitedLocation;
 import tourGuide.msreward.service.RewardsService;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @SpringBootTest
@@ -26,6 +24,8 @@ class highVolumeGetRewardsIT {
     GpsGateway gpsGateway;
     @Autowired
     UserGateway userGateway;
+    @Autowired
+    RewardsService rewardsService;
 
     @Test
     void contextLoads() {
@@ -62,6 +62,8 @@ class highVolumeGetRewardsIT {
         System.out.println("highVolumeGetRewards: Time Elapsed: " + TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()) + " seconds.");
         Assertions.assertTrue(TimeUnit.MINUTES.toSeconds(20) >= TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()));
     }
+
+
 
 
 }

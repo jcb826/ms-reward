@@ -95,7 +95,7 @@ public class RewardsService {
     }
 
 
-    public boolean isWithinAttractionProximity(Attraction attraction, Attraction location) {
+    public boolean isWithinAttractionProximity(Attraction attraction,Location location) {
         return (getDistance(attraction, location) < attractionProximityRange);
     }
 
@@ -123,6 +123,8 @@ public class RewardsService {
         double statuteMiles = STATUTE_MILES_PER_NAUTICAL_MILE * nauticalMiles;
         return statuteMiles;
     }
+
+
 
 
 }
