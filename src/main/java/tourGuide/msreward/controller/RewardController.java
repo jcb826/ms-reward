@@ -2,6 +2,7 @@ package tourGuide.msreward.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import tourGuide.msreward.consumer.ProximityDTO;
 import tourGuide.msreward.model.Attraction;
 import tourGuide.msreward.model.Location;
 import tourGuide.msreward.model.User;
@@ -31,8 +32,10 @@ public class RewardController {
     }
 
     @PostMapping("/reward/proximity")
-    public Boolean isWithinAttractionProximity(@RequestBody Attraction attraction, Location location) {
-        return rewardService.isWithinAttractionProximity(attraction,location);
+    public Boolean isWithinAttractionProximity(@RequestBody ProximityDTO proximityDto) {
+proximityDto.getAttraction().setLatitude(proximityDto.getLocation().getLatitude());
+proximityDto.getAttraction().setLongitude(proximityDto.getLocation().getLongitude());
+        return rewardService.isWithinAttractionProximity(proximityDto.getAttraction(), proximityDto.getLocation());
     }
 
 }
